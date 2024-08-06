@@ -90,6 +90,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
                   if (name.trim().isEmpty) {
                     return 'Nome é obrigatorio';
                   }
+
                   if (name.trim().length < 3) {
                     return 'Nome precisa no mínino de 3 letras.';
                   }
