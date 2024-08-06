@@ -1,7 +1,6 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:shop/models/product.dart';
+import 'package:provider/provider.dart';
+import 'package:shop/models/product_list.dart';
 
 class ProductFormPage extends StatefulWidget {
   const ProductFormPage({super.key});
@@ -13,10 +12,12 @@ class ProductFormPage extends StatefulWidget {
 class _ProductFormPageState extends State<ProductFormPage> {
   final _priceFocus = FocusNode();
   final _descriptionFocus = FocusNode();
+
   final _imageUrlFocus = FocusNode();
   final _imageUrlController = TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
-  final _formData = Map<String, Object>();
+  final _formData = <String, Object>{};
 
   @override
   void initState() {
@@ -40,14 +41,12 @@ class _ProductFormPageState extends State<ProductFormPage> {
 
   bool isValidImageUrl(String url) {
     bool isValidUrl = Uri.tryParse(url)?.hasAbsolutePath ?? false;
-    bool ensWithFile = url.toLowerCase().endsWith('.png') ||
+    bool endsWithFile = url.toLowerCase().endsWith('.png') ||
         url.toLowerCase().endsWith('.jpg') ||
-        url.toLowerCase().endsWith('.jped');
-
-    return isValidUrl && ensWithFile;
+        url.toLowerCase().endsWith('.jpeg');
+    return isValidUrl && endsWithFile;
   }
 
-  // Validação de formulario
   void _submitForm() {
     final isValid = _formKey.currentState?.validate() ?? false;
 
@@ -56,16 +55,12 @@ class _ProductFormPageState extends State<ProductFormPage> {
     }
 
     _formKey.currentState?.save();
-    final newProduct = Product(
-      id: Random().nextDouble().toString(),
-      title: _formData['name'] as String,
-      description: _formData['description'] as String,
-      price: _formData['price'] as double,
-      imageUrl: _formData['imageUrl'] as String,
-    );
-    print(newProduct.id);
-    print(newProduct.title);
-    print(newProduct.price);
+
+    Provider.of<ProductList>(
+      context,
+      listen: false,
+    ).addProductFromData(_formData);
+    Navigator.of(context).pop();
   }
 
   @override
@@ -77,7 +72,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
           IconButton(
             onPressed: _submitForm,
             icon: const Icon(Icons.save),
-          ),
+          )
         ],
       ),
       body: Padding(
@@ -93,17 +88,18 @@ class _ProductFormPageState extends State<ProductFormPage> {
                   FocusScope.of(context).requestFocus(_priceFocus);
                 },
                 onSaved: (name) => _formData['name'] = name ?? '',
-                // Validação de formulario, em validator: se eu retorno null, significa que o campo foi validado.
                 validator: (_name) {
                   final name = _name ?? '';
+
                   if (name.trim().isEmpty) {
-                    return 'Nome é obrigatorio';
+                    return 'Nome é obrigatório.';
                   }
 
                   if (name.trim().length < 3) {
-                    return 'Nome precisa no mínino de 3 letras.';
+                    return 'Nome precisa no mínimo de 3 letras.';
                   }
-                  return 'null';
+
+                  return null;
                 },
               ),
               TextFormField(
@@ -112,6 +108,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
                 focusNode: _priceFocus,
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
+                  signed: true,
                 ),
                 onFieldSubmitted: (_) {
                   FocusScope.of(context).requestFocus(_descriptionFocus);
@@ -121,9 +118,11 @@ class _ProductFormPageState extends State<ProductFormPage> {
                 validator: (_price) {
                   final priceString = _price ?? '';
                   final price = double.tryParse(priceString) ?? -1;
+
                   if (price <= 0) {
-                    return 'Imforme um preço válido.';
+                    return 'Informe um preço válido.';
                   }
+
                   return null;
                 },
               ),
@@ -136,14 +135,16 @@ class _ProductFormPageState extends State<ProductFormPage> {
                     _formData['description'] = description ?? '',
                 validator: (_description) {
                   final description = _description ?? '';
+
                   if (description.trim().isEmpty) {
-                    return 'Descrição é obrigatorio';
+                    return 'Descrição é obrigatória.';
                   }
 
                   if (description.trim().length < 10) {
-                    return 'Nome precisa no mínino de 10 letras.';
+                    return 'Descrição precisa no mínimo de 10 letras.';
                   }
-                  return 'null';
+
+                  return null;
                 },
               ),
               Row(
@@ -151,24 +152,25 @@ class _ProductFormPageState extends State<ProductFormPage> {
                 children: [
                   Expanded(
                     child: TextFormField(
-                        decoration:
-                            const InputDecoration(labelText: 'Url da Imagem'),
-                        keyboardType: TextInputType.url,
-                        textInputAction: TextInputAction.done,
-                        focusNode: _imageUrlFocus,
-                        controller: _imageUrlController,
-                        onFieldSubmitted: (_) => _submitForm(),
-                        onSaved: (imageUrl) =>
-                            _formData['imageUrl'] = imageUrl ?? '',
-                        validator: (_imageUrl) {
-                          final imageUrl = _imageUrl ?? '';
+                      decoration:
+                          const InputDecoration(labelText: 'Url da Imagem'),
+                      keyboardType: TextInputType.url,
+                      textInputAction: TextInputAction.done,
+                      focusNode: _imageUrlFocus,
+                      controller: _imageUrlController,
+                      onFieldSubmitted: (_) => _submitForm(),
+                      onSaved: (imageUrl) =>
+                          _formData['imageUrl'] = imageUrl ?? '',
+                      validator: (_imageUrl) {
+                        final imageUrl = _imageUrl ?? '';
 
-                          if (!isValidImageUrl(imageUrl)) {
-                            return 'Informe uma Url válida!';
-                          }
+                        if (!isValidImageUrl(imageUrl)) {
+                          return 'Informe uma Url válida!';
+                        }
 
-                          return null;
-                        }),
+                        return null;
+                      },
+                    ),
                   ),
                   Container(
                     height: 100,
