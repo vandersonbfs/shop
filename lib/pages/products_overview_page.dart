@@ -28,7 +28,7 @@ class _ProductsOverViewPageState extends State<ProductsOverViewPage> {
       appBar: AppBar(
         // backgroundColor: Colors.deepOrange,
         // titleTextStyle: const TextStyle(color: Colors.white),
-        title: const Text('AquiExpress'),
+        title: const Text('Minha Loja'),
         centerTitle: true,
         actions: [
           PopupMenuButton(
