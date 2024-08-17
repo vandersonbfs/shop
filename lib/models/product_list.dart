@@ -1,10 +1,15 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:shop/data/dummy_data.dart';
 import 'package:shop/models/product.dart';
+//import 'package:shop/utils/constants.dart';
 
 class ProductList with ChangeNotifier {
+  // Definindo o caminho para o banco de dados firebase.
+  final _baseUrl = 'https://shop-cfcb3-default-rtdb.firebaseio.com';
   final List<Product> _items = dummyProducts;
 
   // Metodo get para pegar os produtos de clone da lista [..._items]
@@ -18,6 +23,20 @@ class ProductList with ChangeNotifier {
 
   // Criar um metodo para adicionar produto
   void addProduct(Product product) {
+    // Chamar o metodo post
+    http.post(
+      Uri.parse('$_baseUrl/products.json'),
+      body: jsonEncode(
+        {
+          "name": product.title,
+          "description": product.description,
+          "price": product.price,
+          "imageUrl": product.imageUrl,
+          "isFavorite": product.isFavorite,
+        },
+      ),
+    );
+    // Vamos continuar criando os dados em memoria.
     _items.add(product);
     // sempre que houver uma mudança vai ser chamado o ChangeNotifier
     notifyListeners();
