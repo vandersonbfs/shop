@@ -10,6 +10,7 @@ import 'package:shop/models/product.dart';
 class ProductList with ChangeNotifier {
   // Definindo o caminho para o banco de dados firebase.
   final _baseUrl = 'https://shop-cfcb3-default-rtdb.firebaseio.com';
+
   final List<Product> _items = dummyProducts;
 
   // Metodo get para pegar os produtos de clone da lista [..._items]
@@ -23,10 +24,10 @@ class ProductList with ChangeNotifier {
 
   // Criar um metodo para adicionar produto
   void addProduct(Product product) {
-    // Chamar o metodo post
-    http
-        .post(
-      Uri.parse('$_baseUrl/products.json'),
+    // Chamar o metodo post, que veio de http.
+    final future = http.post(
+      Uri.parse(
+          '$_baseUrl/products.json'), //é obrigado terminar a url com .json
       body: jsonEncode(
         {
           "name": product.title,
@@ -36,11 +37,23 @@ class ProductList with ChangeNotifier {
           "isFavorite": product.isFavorite,
         },
       ),
-    )
-        .then((response) {
+    );
+    future.then((response) {
       //Ação que será executada depois da resposta do Firebase.
       // Vamos continuar criando os dados em memoria.
-      _items.add(product);
+      //Recuperando do Firebase o Id.
+      final id = jsonDecode(response.body)['name'];
+      // Alterando o _items.add para receber o id do Firebase.
+      _items.add(
+        Product(
+          id: id,
+          title: product.title,
+          description: product.description,
+          price: product.price,
+          imageUrl: product.imageUrl,
+          isFavorite: product.isFavorite,
+        ),
+      );
       // sempre que houver uma mudança vai ser chamado o ChangeNotifier
       notifyListeners();
     });
