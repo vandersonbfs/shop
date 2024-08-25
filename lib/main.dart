@@ -41,10 +41,10 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(0, 30, 32, 34),
+            seedColor: const Color.fromARGB(0, 9, 125, 202),
             brightness: Brightness.dark,
-            primary: Colors.deepOrange,
-            secondary: const Color.fromARGB(0, 44, 46, 50),
+            primary: const Color.fromARGB(0, 128, 189, 15),
+            secondary: const Color.fromARGB(0, 34, 56, 72),
             tertiary: const Color.fromARGB(0, 238, 28, 28),
           ),
           fontFamily: 'Lato',

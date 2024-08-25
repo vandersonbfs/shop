@@ -108,16 +108,16 @@ class _ProductFormPageState extends State<ProductFormPage> {
                   FocusScope.of(context).requestFocus(_priceFocus);
                 },
                 onSaved: (name) => _formData['name'] = name ?? '',
-                validator: (_name) {
-                  final name = _name ?? '';
+                validator: (name) {
+                  // final name = name ?? '';
 
-                  if (name.trim().isEmpty) {
-                    return 'Nome é obrigatório.';
-                  }
+                  // if (name.trim().isEmpty) {
+                  //   return 'Nome é obrigatório.';
+                  // }
 
-                  if (name.trim().length < 3) {
-                    return 'Nome precisa no mínimo de 3 letras.';
-                  }
+                  // if (name.trim().length < 3) {
+                  //   return 'Nome precisa no mínimo de 3 letras.';
+                  // }
 
                   return null;
                 },
@@ -136,8 +136,8 @@ class _ProductFormPageState extends State<ProductFormPage> {
                 },
                 onSaved: (price) =>
                     _formData['price'] = double.parse(price ?? '0'),
-                validator: (_price) {
-                  final priceString = _price ?? '';
+                validator: (price) {
+                  final priceString = price ?? '';
                   final price = double.tryParse(priceString) ?? -1;
 
                   if (price <= 0) {
@@ -155,8 +155,8 @@ class _ProductFormPageState extends State<ProductFormPage> {
                 maxLines: 3,
                 onSaved: (description) =>
                     _formData['description'] = description ?? '',
-                validator: (_description) {
-                  final description = _description ?? '';
+                validator: (description) {
+                  final description = description ?? '';
 
                   if (description.trim().isEmpty) {
                     return 'Descrição é obrigatória.';
@@ -183,8 +183,8 @@ class _ProductFormPageState extends State<ProductFormPage> {
                       onFieldSubmitted: (_) => _submitForm(),
                       onSaved: (imageUrl) =>
                           _formData['imageUrl'] = imageUrl ?? '',
-                      validator: (_imageUrl) {
-                        final imageUrl = _imageUrl ?? '';
+                      validator: (imageUrl) {
+                        final imageUrl = imageUrl ?? '';
 
                         if (!isValidImageUrl(imageUrl)) {
                           return 'Informe uma Url válida!';
@@ -210,9 +210,13 @@ class _ProductFormPageState extends State<ProductFormPage> {
                     alignment: Alignment.center,
                     child: _imageUrlController.text.isEmpty
                         ? const Text('Informe a Url')
-                        : FittedBox(
-                            fit: BoxFit.cover,
-                            child: Image.network(_imageUrlController.text),
+                        : SizedBox(
+                            width: 100,
+                            height: 100,
+                            child: FittedBox(
+                              fit: BoxFit.cover,
+                              child: Image.network(_imageUrlController.text),
+                            ),
                           ),
                   ),
                 ],

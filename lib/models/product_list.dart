@@ -24,7 +24,8 @@ class ProductList with ChangeNotifier {
   // Criar um metodo para adicionar produto
   void addProduct(Product product) {
     // Chamar o metodo post
-    http.post(
+    http
+        .post(
       Uri.parse('$_baseUrl/products.json'),
       body: jsonEncode(
         {
@@ -35,11 +36,14 @@ class ProductList with ChangeNotifier {
           "isFavorite": product.isFavorite,
         },
       ),
-    );
-    // Vamos continuar criando os dados em memoria.
-    _items.add(product);
-    // sempre que houver uma mudança vai ser chamado o ChangeNotifier
-    notifyListeners();
+    )
+        .then((response) {
+      //Ação que será executada depois da resposta do Firebase.
+      // Vamos continuar criando os dados em memoria.
+      _items.add(product);
+      // sempre que houver uma mudança vai ser chamado o ChangeNotifier
+      notifyListeners();
+    });
   }
 
   void updateProduct(Product product) {
